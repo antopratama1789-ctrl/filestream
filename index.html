@@ -6,24 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Streaming video Filemoon cepat, ringan, dan responsif.">
 
-<!-- ===== STEP LOGIC WWW5 → PLAY ===== -->
-<script>
-(function(){
-  const KEY = "fm_step_www5";
-
-  // jika sudah pernah masuk www5 → lempar ke play
-  if (localStorage.getItem(KEY) === "1") {
-    const hash = location.hash || "#/";
-    location.replace("https://play.filesmoon.site/" + hash);
-    return;
-  }
-
-  // kunjungan pertama → tandai
-  localStorage.setItem(KEY, "1");
-})();
-</script>
-<!-- ================================= -->
-
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 
 <style>
@@ -169,7 +151,7 @@ function renderCard(v){
   `;
   card.onclick=()=>{
     fireAd();
-    location.hash=\`/e/\${v.file_code}\`;
+    location.hash=`/e/${v.file_code}`;
   };
   list.appendChild(card);
 }
@@ -196,7 +178,7 @@ function handleRoute(){
 
   window.scrollTo({top:0,behavior:"smooth"});
 
-  player.src=\`https://filemoon.sx/e/\${id}\`;
+  player.src=`https://filemoon.sx/e/${id}`;
   playerBox.style.display="block";
   videoInfo.style.display="block";
   overlay.style.display="flex";
@@ -240,7 +222,7 @@ async function loadVideos(){
         .forEach(renderCard);
 
       if(PAGE*HOME_PER_PAGE < FILES.length){
-        pagination.innerHTML=\`<a href="?page=\${PAGE+1}">Lihat video lainnya →</a>\`;
+        pagination.innerHTML=`<a href="?page=${PAGE+1}">Lihat video lainnya →</a>`;
       }
     }
   }catch(e){
@@ -259,6 +241,17 @@ window.addEventListener("hashchange",handleRoute);
 
 loadVideos();
 </script>
-
+ <!-- Histats.com  START  (aync)-->
+<script type="text/javascript">var _Hasync= _Hasync|| [];
+_Hasync.push(['Histats.start', '1,5005360,4,0,0,0,00010000']);
+_Hasync.push(['Histats.fasi', '1']);
+_Hasync.push(['Histats.track_hits', '']);
+(function() {
+var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+hs.src = ('//s10.histats.com/js15_as.js');
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+})();</script>
+<noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?5005360&101" alt="" border="0"></a></noscript>
+<!-- Histats.com  END  -->
 </body>
 </html>
