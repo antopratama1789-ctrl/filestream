@@ -11,7 +11,10 @@
   --accent:#e50914;
   --text:#fff;
 }
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  touch-action:manipulation;
+}
 body{
   margin:0;
   background:var(--bg);
@@ -27,7 +30,7 @@ header{background:#000;border-bottom:1px solid #1f1f2a}
 .logo{font-size:22px;font-weight:700;color:var(--accent);text-decoration:none}
 .container{max-width:1200px;margin:auto;padding:16px}
 
-/* ===== PLAYER ===== */
+/* PLAYER */
 .player{
   display:none;
   position:relative;
@@ -36,8 +39,6 @@ header{background:#000;border-bottom:1px solid #1f1f2a}
   overflow:hidden;
   margin-bottom:12px;
 }
-
-/* iframe wrapper */
 .iframe-box{
   width:100%;
   height:520px;
@@ -58,7 +59,7 @@ header{background:#000;border-bottom:1px solid #1f1f2a}
   margin:auto;
 }
 
-/* fullscreen fake */
+/* fake fullscreen */
 .player.fullscreen{
   position:fixed;
   inset:0;
@@ -77,16 +78,19 @@ header{background:#000;border-bottom:1px solid #1f1f2a}
 
 /* UI */
 #fullscreenBtn{
-  position:absolute;top:10px;right:10px;
+  position:absolute;
+  top:10px;
+  right:10px;
   z-index:10;
   background:var(--accent);
-  border:none;color:#fff;
+  border:none;
+  color:#fff;
   padding:6px 10px;
   border-radius:6px;
   cursor:pointer;
 }
 
-/* ===== TITLE (STREAM PAGE ONLY) ===== */
+/* TITLE */
 .video-title{
   display:none;
   margin:10px 4px 18px;
@@ -116,7 +120,6 @@ header{background:#000;border-bottom:1px solid #1f1f2a}
   background:rgba(0,0,0,.15);
   cursor:pointer;
 }
-
 #adBanner{
   position:absolute;
   bottom:16px;
@@ -133,7 +136,7 @@ header{background:#000;border-bottom:1px solid #1f1f2a}
 }
 #adBanner img{width:100%;height:100%;object-fit:cover}
 
-/* cards */
+/* CARDS */
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
@@ -157,10 +160,14 @@ header{background:#000;border-bottom:1px solid #1f1f2a}
 }
 .info{padding:12px}
 .title{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pagination{display:flex;justify-content:center;gap:12px;margin:16px 0}
+.pagination{
+  display:flex;justify-content:center;gap:12px;margin:16px 0
+}
 .pagination button{
-  padding:6px 10px;background:var(--accent);
-  border:none;color:#fff;border-radius:6px;cursor:pointer
+  padding:6px 10px;
+  background:var(--accent);
+  border:none;color:#fff;
+  border-radius:6px;cursor:pointer
 }
 footer{text-align:center;padding:20px;color:#777;font-size:13px}
 </style>
@@ -183,7 +190,8 @@ footer{text-align:center;padding:20px;color:#777;font-size:13px}
   <div class="iframe-box">
     <iframe id="playerFrame"
       loading="lazy"
-      allow="autoplay; fullscreen"
+      allow="autoplay"
+      sandbox="allow-scripts allow-same-origin"
       referrerpolicy="no-referrer"></iframe>
   </div>
 
@@ -192,7 +200,6 @@ footer{text-align:center;padding:20px;color:#777;font-size:13px}
   <div id="adOverlay"></div>
 </div>
 
-<!-- TITLE -->
 <h1 id="videoTitle" class="video-title"></h1>
 
 <div id="videos" class="grid"></div>
@@ -213,7 +220,6 @@ const HOME_PER_PAGE=12;
 const AD_LINK="https://www.effectivegatecpm.com/dvm2zgjx6w?key=40b33d39d469660e445872b4aed08c57";
 const BANNER_IMG="https://shopee.co.id/inspirasi-shopee/wp-content/uploads/2020/08/Kampus-Shopee-Inspirasi-Shopee-Blog-Header.jpg";
 
-/* DOM */
 const list=document.getElementById("videos");
 const playerBox=document.getElementById("playerBox");
 const iframe=document.getElementById("playerFrame");
@@ -231,13 +237,24 @@ adBanner.innerHTML=`<img src="${BANNER_IMG}">`;
 let VIDEOS=[],currentPage=1;
 let firstPlayAd=true;
 
+/* ORIENTATION */
+function detectOrientation(){
+  if(window.innerHeight > window.innerWidth){
+    playerBox.classList.add("portrait");
+  }else{
+    playerBox.classList.remove("portrait");
+  }
+}
+window.addEventListener("resize",detectOrientation);
+window.addEventListener("orientationchange",detectOrientation);
+
 /* ADS */
 centerPlay.onclick=()=>{
   if(firstPlayAd){
     window.open(AD_LINK,"_blank");
     firstPlayAd=false;
   }
-  playerBox.classList.add("playing");
+  playerBox.classList.add("playing","fullscreen");
 };
 
 function showOverlay(){
@@ -258,7 +275,7 @@ function showBanner(){
   };
 }
 
-/* FULLSCREEN */
+/* FULLSCREEN BUTTON */
 fsBtn.onclick=()=>{
   playerBox.classList.toggle("fullscreen");
 };
@@ -293,7 +310,6 @@ function handleRoute(){
     renderPage(currentPage);
     return;
   }
-
   const v=VIDEOS.find(x=>x.embed===id);
   if(!v) return;
 
@@ -303,6 +319,7 @@ function handleRoute(){
 
   iframe.src=`https://cdn.videy.co/${id}.mp4`;
   firstPlayAd=true;
+  detectOrientation();
   setTimeout(showOverlay,25000);
   setTimeout(showBanner,30000);
 }
